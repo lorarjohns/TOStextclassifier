@@ -107,6 +107,8 @@ optimizer_candidates = ["sgd", "adam", "rmsprop"]
 
 classifier = KerasClassifier(make_model, batch_size=32)
 
+# If scoring param is not given to GridSearchCV,
+# it will use the same scoring metrics as the estimator.
 validator = GridSearchCV(classifier, param_grid={
     'dense_layer_size': dense_size_candidates,
     'alpha': alpha_candidates, 
