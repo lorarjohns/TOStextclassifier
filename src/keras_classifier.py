@@ -40,7 +40,7 @@ print(f"y_train shape: {y_train.shape}\n y_test shape: {y_test.shape}")
 def make_model(activator="relu", alpha=0.3, optimizer="sgd", 
         dense_layer_size=32, num_layers=3, 
         dropout_rate=0.1, loss="categorical_crossentropy", 
-        metrics=["accuracy"]):
+        metrics=["accuracy", "mse", "categorical_crossentropy"]):
 
     '''
     
@@ -98,13 +98,12 @@ you wrap your neural-network creation.
 activator_candidates = ["relu"]
 alpha_candidates = [0.1, 0.3]
 num_layer_candidates = [1, 3]
-dense_size_candidates = [32, 64, 128, 512]
+dense_size_candidates = [32, 64, 128]
 dropout_candidates = [0.0, 0.1, 0.3]
 
 loss_func_candidates = ["sparse_categorical_crossentropy", 
 "cosh", "categorical_hinge"]
 optimizer_candidates = ["sgd", "adam", "rmsprop"]
-score_metric_candidates = [["accuracy", "mse"], ["accuracy","categorical_crossentropy"]]
 
 classifier = KerasClassifier(make_model, batch_size=32)
 
@@ -112,10 +111,9 @@ validator = GridSearchCV(classifier, param_grid={
     'dense_layer_size': dense_size_candidates,
     'alpha': alpha_candidates, 
     'num_layers': num_layer_candidates,
-    'dropout_rate': dropout_candidates,
-    'optimizer': optimizer_candidates,
-    'metrics': score_metric_candidates
-    }, n_jobs=1)
+#    'dropout_rate': dropout_candidates,
+    'optimizer': optimizer_candidates
+    }, n_jobs=-1)
 
 validator.fit(x_train, y_train)
 
