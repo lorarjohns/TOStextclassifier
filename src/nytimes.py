@@ -1,6 +1,12 @@
 import sqlite3
+from pathlib import Path
+
+import spacy
+
+from tqdm import tqdm
 
 def create_connection(db_file):
+
     """ create a database connection to the SQLite database
         specified by the db_file
     :param db_file: database file
@@ -15,18 +21,27 @@ def create_connection(db_file):
 
     return conn
 
-db_file = "nytimes.db"
+db_file = "/Users/lorajohns/Development/GitHub_Repos/nytimes_copy/nytimes.db"
+path = Path(db_file).resolve()
 
-def select_articles(pct):
+def select_articles(conn):
+
     """
+    Get sample articles from database
     """
     cur = conn.cursor()
-    cur.execute(f"SELECT id, content FROM articles WHERE id % 10 < 2;")
+    cur.execute(f"SELECT content FROM articles WHERE id % 10 < 1;")
 
     rows = cur.fetchall()
     return rows
 
 if __name__ == "__main__":
-    conn = create_connection("nytimes.db")
-    samp = select_articles(2)
-    print(samp[0])
+    conn = create_connection(path)
+    samp = select_articles(conn)
+    texts = [samp[i][0] for i, article in enumerate(samp)]
+    nlp = spacy.load("en_core_web_md")
+    docs = tqdm(nlp.pipe(texts[:15]))
+    
+    for doc in docs:
+        for ent in doc.ents:
+            print(ent, ent.label_)
